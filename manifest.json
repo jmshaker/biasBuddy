@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "BiasBuddy",
+    "options_page": "options.html",
+    "description": "Bias detection extension",
+    "version": "1.0",
+    "permissions": ["activeTab", "declarativeContent", "storage", "tabs"],
+
+    "background": {
+        "scripts": ["background.js", "jquery-3.3.1.min.js"],
+        "persistent": false
+      },
+
+    "page_action": {
+        "default_icon": "img.png",
+        "default_popup": "popup.html",
+        "default_title": "BiasBuddy"
+    }
+}
