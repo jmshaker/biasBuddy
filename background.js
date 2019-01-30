@@ -1,79 +1,117 @@
-/*class Article {
-
-  constructor (name) {
-      this.name = name;
-  }
-
-}*/
-
 chrome.runtime.onInstalled.addListener(function() {
 
-  chrome.tabs.query({'active': true, 'lastFocusedWindow': true}, function (tabs) {
-    
-    var url = tabs[0].url;
 
-    chrome.storage.local.set({'siteAddress': url}, function() {
-      console.log('Site address: ' + url);
+});
+
+function retrieveSiteInfo(tabId){
+
+  var url = "";
+
+  chrome.tabs.get(tabId, function (currentTab) {
+
+    url = currentTab.url;
+
+  });
+
+  chrome.storage.local.set({'siteAddress': url}, function() {
+    console.log('Site address: ' + url);
+
+    $.post("http://127.0.0.1:5002/hello", {"url": url})
+    
+    .done(function(data) {
+
+      chrome.storage.local.set({'authors': data.authors}, function() {
+      });
+
+      chrome.storage.local.set({'title': data.title}, function() {
+      });
+
+      chrome.storage.local.set({'publishDate': data.publishDate}, function() {
+      });
+
+      chrome.storage.local.set({'content': data.content}, function() {
+      });
+
+      chrome.storage.local.set({'keywords': data.keywords}, function() {
+      });
+
+      chrome.storage.local.set({'summary': data.summary}, function() {
+      });
+
+    })
+
+    .fail(function(response) {
+
+      console.log('Error: ' + response.responseText);
+      
     });
 
-    const saveExtractedText = (url) => {
+    var baseUrl = window.location.host;
 
-      $.post("http://127.0.0.1:5002/hello", {"url": url})
-      
-      //var article = new Article("hello")
+    var baseUrl2 = baseUrl + "";
 
-      .done(function(data) {
+    /*var isAddress = false;
 
-        chrome.storage.local.set({'authors': data.authors}, function() {
-        });
+    for (var i = 0; i < url.length; i++){
 
-        chrome.storage.local.set({'title': data.title}, function() {
-        });
+      var c = url[i];
 
-        chrome.storage.local.set({'publishDate': data.publishDate}, function() {
-        });
+      if (c == '/')
 
-        chrome.storage.local.set({'content': data.content}, function() {
-        });
+    }*/
 
-        chrome.storage.local.set({'keywords': data.keywords}, function() {
-        });
+    $.get("https://newsapi.org/v2/sources?q=" + "bbc" + "&apiKey=6d5b5753b28949f59213beed43d315a2")
 
-        chrome.storage.local.set({'summary': data.summary}, function() {
-        });
+    .done(function(data) {
 
-      });
-    
+      console.log('Status: ' + data.status);
+
+    });
+
+  });
+
+};
+
+chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
+
+  var url = "";
+
+  chrome.tabs.get(tabId, function (currentTab) {
+
+    url = currentTab.url;
+
+    if (changeInfo.url == url) {
+
+      retrieveSiteInfo(tabId);
+  
     }
-    
-    chrome.runtime.onMessage.addListener(
-      (request, sender, senderResponse) => {
-        switch (request.message) {
-          case 'save_text': {
-
-            saveExtractedText(request.statusText);
-
-            break;
-          }
-          default:
-        }
-      }
-    );
-    
-
 
   });
 
-  chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+});
 
-    chrome.declarativeContent.onPageChanged.addRules([{
-      conditions: [new chrome.declarativeContent.PageStateMatcher({
-        pageUrl: {/*hostEquals: 'developer.chrome.com'*/ schemes: ['https']},
-      })
-      ],
-        actions: [new chrome.declarativeContent.ShowPageAction()]
-    }]);
+/*chrome.tabs.onUpdated.addListener(function(updatedInfo){
 
-  });
+  console.log('Site address: ');
+
+  retrieveSiteInfo();
+
+});*/
+
+chrome.tabs.onActivated.addListener(function(activeInfo) {
+
+  retrieveSiteInfo(activeInfo.tabId);
+
+});
+
+chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
+
+  chrome.declarativeContent.onPageChanged.addRules([{
+    conditions: [new chrome.declarativeContent.PageStateMatcher({
+      pageUrl: {/*hostEquals: 'developer.chrome.com'*/ schemes: ['https']},
+    })
+    ],
+      actions: [new chrome.declarativeContent.ShowPageAction()]
+  }]);
 
 });
