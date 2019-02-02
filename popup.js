@@ -13,11 +13,45 @@ chrome.storage.local.get('siteAddress', function(data) {
 
 });
 
-chrome.storage.local.get('authors', function(data) {
+chrome.storage.local.get('siteStatus', function(data) {
+
+  authorsText.innerHTML = data.siteStatus;
+
+  switch(data.siteStatus){
+
+    case "trusted":
+
+    document.getElementById("websiteStatusIcon").src="siteTypeIcons/trusted.png";
+
+    break;
+
+    case "satirical":
+
+    document.getElementById("websiteStatusIcon").src="siteTypeIcons/satirical.png";
+
+    break;
+
+    case "fake":
+
+    document.getElementById("websiteStatusIcon").src="siteTypeIcons/fake.png";
+
+    break;
+
+    case "unknown":
+
+    document.getElementById("websiteStatusIcon").src="siteTypeIcons/unknown.png";
+
+    break;
+
+  }
+
+});
+
+/*chrome.storage.local.get('authors', function(data) {
 
   authorsText.innerHTML = data.authors;
 
-});
+});*/
 
 chrome.storage.local.get('title', function(data) {
 

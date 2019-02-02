@@ -1,7 +1,112 @@
-chrome.runtime.onInstalled.addListener(function() {
+function checkSiteAddress(siteAddress){
 
+  var siteStatus = "";
 
-});
+  var trustedSite = false, satiricalSite = false, fakeSite = false;
+  
+  trustedSite = isSiteTrusted(siteAddress);
+
+  if (trustedSite == true){
+
+    return "trusted";
+
+  }
+  else{
+
+    satiricalSite = isSiteSatirical(siteAddress);
+
+    if (satiricalSite == true){
+
+      return "satirical";
+
+    }
+    else{
+
+      fakeSite = isSiteFake(siteAddress);
+  
+      if (fakeSite == true){
+  
+        return "fake";
+  
+      }
+      else{
+
+        return "unknown";
+
+      }
+  
+    }
+
+  }
+
+};
+
+function isSiteTrusted(siteAddress){
+
+  var trustedSite = false;
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/whitelistedSites", {"url": siteAddress})
+
+  .done(function(data) {
+
+    if (data.whitelistedSites.length == 1){
+  
+      trustedSite = true;
+
+    }
+
+  });
+
+  return trustedSite;
+
+};
+
+function isSiteSatirical(siteAddress){
+
+  var satiricalSite = false;
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/satiricalSites", {"url": siteAddress})
+
+  .done(function(data) {
+
+    if (data.satiricalSites.length == 1){
+  
+      satiricalSite = true;
+
+    }
+
+  });
+
+  return satiricalSite;
+
+};
+
+function isSiteFake(siteAddress){
+
+  var fakeSite = false;
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/blacklistedSites", {"url": siteAddress})
+
+  .done(function(data) {
+
+    if (data.blacklistedSites.length == 1){
+  
+      fakeSite = true;
+
+    }
+
+  });
+
+  return fakeSite;
+
+};
+
 
 function retrieveSiteInfo(tabId){
 
@@ -36,6 +141,11 @@ function retrieveSiteInfo(tabId){
       });
 
       chrome.storage.local.set({'summary': data.summary}, function() {
+      });
+
+      var siteStatus = checkSiteAddress(url);
+
+      chrome.storage.local.set({'siteStatus': siteStatus}, function() {
       });
 
     })
