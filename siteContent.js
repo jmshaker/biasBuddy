@@ -1,13 +1,13 @@
-/*let articleStatusText = document.getElementById('articleStatusText');
+let articleStatusText = document.getElementById('articleStatusText');
 let siteAddressText = document.getElementById('siteAddressText');
 let authorsText = document.getElementById('authorsText');
 let titleText = document.getElementById('titleText');
 let publishDateText = document.getElementById('publishDateText');
 let contentText = document.getElementById('contentText');
 let keywordsText = document.getElementById('keywordsText');
-let summaryText = document.getElementById('summaryText');*/
+let summaryText = document.getElementById('summaryText');
 
-let siteContentButton = document.getElementById('siteContent');
+/*let siteContentButton = document.getElementById('siteContent');
 let wordAnalysisButton = document.getElementById('wordAnalysis');
 let furtherReadingButton = document.getElementById('furtherReading');
 
@@ -15,7 +15,7 @@ siteContentButton.addEventListener('click', function() { siteContent(); })
 
 wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
 
-furtherReadingButton.addEventListener('click', function() { furtherReading(); })
+furtherReadingButton.addEventListener('click', function() { furtherReading(); })*/
 
 
 chrome.storage.local.get('siteAddress', function(data) {
@@ -64,7 +64,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
 });
 
-/*chrome.storage.local.get('authors', function(data) {
+chrome.storage.local.get('authors', function(data) {
 
   authorsText.innerHTML = data.authors;
 
@@ -117,22 +117,22 @@ chrome.storage.local.get('summary', function(data) {
 
   summaryText.innerHTML = data.summary;
 
-});*/
+});
 
 function siteContent(){
 
-  window.location.href="siteContent.html";
+  
 
 }
 
 function wordAnalysis(){
 
-  window.location.href="wordAnalysis.html";
+  document.getElementById("wordAnalysis").style.backgroundColor="black";
 
 }
 
 function furtherReading(){
 
-  window.location.href="furtherReading.html";
+  document.getElementById("furtherReading").style.backgroundColor="black";
 
 }

@@ -5,7 +5,7 @@ body{
 
 #header{
     top:0px;
-    background-color:blue;
+    background-color:white;
 	position:fixed;
 	height:50px;
 	width: 100%;
@@ -20,7 +20,7 @@ body{
 	height:40px;
     width:40px;
     border-radius:20px;
-    background-color: aqua;
+    background-color: white;
 	z-index: 1;
 	
 }
@@ -36,8 +36,52 @@ body{
 
 }
 
-#other{
+#buttons{
+    display: block;
     top:50px;
+    background-color:aqua;
+    position:fixed;
+    height: fit-content;
+	width: 100%;
+	z-index: 1;
+}
+
+#siteContent{
+
+    left:0px;
+    background-color: white;
+    height:20px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+
+}
+
+#wordAnalysis{
+
+    left:0px;
+    background-color: white;
+    height:20px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+
+}
+
+#furtherReading{
+
+    left:0px;
+    background-color: white;
+    height:20px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+
+}
+
+
+#other{
+    top:100px;
     position: relative;
 	height:270px;
 	width: 100%;

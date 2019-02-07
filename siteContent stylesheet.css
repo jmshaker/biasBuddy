@@ -1,0 +1,45 @@
+body{
+	height: 300px;
+    width: 200px;
+}
+
+#header{
+    top:0px;
+    background-color:white;
+	position:fixed;
+	height:50px;
+	width: 100%;
+	z-index: 1;
+}
+
+#websiteStatus{
+
+    top:5px;
+    left:50%;
+    position:fixed;
+	height:40px;
+    width:40px;
+    border-radius:20px;
+    background-color: white;
+	z-index: 1;
+	
+}
+
+#websiteStatus img {
+
+    top:0px;
+    left:0px;
+	border-radius: 20px;
+    height:100%;
+    width:100%;
+	z-index: 1;
+
+}
+
+#other{
+    top:50px;
+    position: relative;
+	height:270px;
+	width: 100%;
+	z-index: 1;
+}

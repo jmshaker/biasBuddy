@@ -148,6 +148,14 @@ function retrieveSiteInfo(tabId){
       chrome.storage.local.set({'siteStatus': siteStatus}, function() {
       });
 
+      if (data.content != undefined){
+
+        var fakeWords = getFakeWords(data.content);
+
+        console.log(fakeWords);
+
+      }
+
     })
 
     .fail(function(response) {
@@ -182,6 +190,33 @@ function retrieveSiteInfo(tabId){
 
 };
 
+
+function getFakeWords(content){
+
+  var fakeWordsList = [];
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/keywords", {"text": content})
+
+  .done(function(data) {
+
+    if (data.keywords.length != 0){
+  
+      for (var i = 0; i < data.keywords.length; i++){
+
+        fakeWordsList.push(data.keywords[i]);
+      
+      }
+
+    }
+
+  });
+
+  return fakeWordsList;
+
+};
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
   var url = "";
@@ -199,14 +234,6 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
   });
 
 });
-
-/*chrome.tabs.onUpdated.addListener(function(updatedInfo){
-
-  console.log('Site address: ');
-
-  retrieveSiteInfo();
-
-});*/
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
 
