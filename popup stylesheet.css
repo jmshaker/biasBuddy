@@ -1,5 +1,5 @@
 body{
-	height: 300px;
+	height: 200px;
     width: 200px;
 }
 
@@ -9,7 +9,8 @@ body{
 	position:fixed;
 	height:50px;
 	width: 100%;
-	z-index: 1;
+    z-index: 2;
+    display: block;
 }
 
 #websiteStatus{
@@ -21,19 +22,32 @@ body{
     width:40px;
     border-radius:20px;
     background-color: white;
-	z-index: 1;
+	/*z-index: 2;*/
 	
 }
 
-#websiteStatus img {
+#websiteName{
 
-    top:0px;
+    top:5px;
     left:0px;
-	border-radius: 20px;
-    height:100%;
+    position:fixed;
+	height:40px;
     width:100%;
-	z-index: 1;
+    /*z-index: 1;*/
+    visibility: hidden;
+    
+}
 
+#websiteType{
+
+    top:5px;
+    left:150px;
+    position:fixed;
+	height:40px;
+    width:100%;
+    /*z-index: 1;*/
+    visibility: hidden;
+    
 }
 
 #buttons{
@@ -79,11 +93,11 @@ body{
 
 }
 
-
-#other{
-    top:100px;
-    position: relative;
-	height:270px;
+#footer {
+    bottom:0px;
+    background-color:aqua;
+	position:fixed;
+	height:60px;
 	width: 100%;
 	z-index: 1;
 }

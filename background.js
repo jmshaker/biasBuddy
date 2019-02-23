@@ -119,9 +119,8 @@ function retrieveSiteInfo(tabId){
   });
 
   chrome.storage.local.set({'siteAddress': url}, function() {
-    console.log('Site address: ' + url);
 
-    $.post("http://127.0.0.1:5002/hello", {"url": url})
+    $.post("http://127.0.0.1:5002/hello2", {"url": url})
     
     .done(function(data) {
 
@@ -152,7 +151,23 @@ function retrieveSiteInfo(tabId){
 
         var fakeWords = getFakeWords(data.content);
 
-        console.log(fakeWords);
+        chrome.storage.local.set({'fakeWords': fakeWords}, function() {
+        });
+
+        //
+
+        var relatedArticles;
+
+        chrome.storage.local.get('publishDate', function(x) {
+
+          relatedArticles = getRelatedArticles(data, x.publishDate);
+        
+          chrome.storage.local.set({'relatedArticles': relatedArticles}, function() {
+          });
+
+        });
+
+        //
 
       }
 
@@ -164,26 +179,41 @@ function retrieveSiteInfo(tabId){
       
     });
 
-    var baseUrl = window.location.host;
+    var isAddress = false;
 
-    var baseUrl2 = baseUrl + "";
-
-    /*var isAddress = false;
+    var baseAddress = "";
 
     for (var i = 0; i < url.length; i++){
 
       var c = url[i];
 
-      if (c == '/')
+      if (isAddress == true){
 
-    }*/
+        if (c == "/"){
 
-    $.get("https://newsapi.org/v2/sources?q=" + "bbc" + "&apiKey=6d5b5753b28949f59213beed43d315a2")
+          break;
 
-    .done(function(data) {
+        }
+        else{
 
-      console.log('Status: ' + data.status);
+          baseAddress = baseAddress + c; 
 
+        }
+
+      }
+      else{
+
+        if (c == '.'){
+
+          isAddress = true;
+  
+        }
+
+      }
+
+    }
+
+    chrome.storage.local.set({'siteName': baseAddress}, function() {
     });
 
   });
@@ -214,6 +244,138 @@ function getFakeWords(content){
   });
 
   return fakeWordsList;
+
+};
+
+function onlyUnique(value, index, self) { 
+  return self.indexOf(value) === index;
+}
+
+function getRelatedArticles(data, publishDate){
+
+  var relatedArticles = [];
+
+  var allKeywords = "", allPeople = "", allOrganisations = "", finalQuery = "";
+
+  $.ajaxSetup({async: false});
+
+  data.keywords = data.keywords.filter( onlyUnique );
+  
+  for (i = 0; i < data.keywords.length; i++){
+
+    //if (data.title.includes(data.keywords[i])){
+
+      if (allKeywords == "") {
+
+        allKeywords = allKeywords + data.keywords[i]
+  
+      }
+      else
+      {
+  
+        allKeywords = allKeywords + " OR " + data.keywords[i];
+    
+      }
+
+  //}
+
+  }
+
+  data.people = data.people.filter( onlyUnique );
+
+  for (i = 0; i < data.people.length; i++){
+
+    if (data.title.includes(data.people[i])){
+
+      if (allPeople == ""){
+
+        allPeople = allPeople + data.people[i];
+
+      }
+      else
+      {
+
+        allPeople = allPeople + " OR " + data.people[i];
+    
+      }
+
+    }
+  }
+
+  data.organisations = data.organisations.filter( onlyUnique );
+
+  for (i = 0; i < data.organisations.length; i++){
+
+    if (data.title.includes(data.organisations[i])){
+
+      if (allOrganisations == ""){
+
+        allOrganisations = allOrganisations + data.organisations[i];
+
+      }
+      else
+      {
+
+        allOrganisations = allOrganisations + " OR " + data.organisations[i];
+    
+      }
+
+    }
+  }
+
+  if (allKeywords != ""){
+
+    finalQuery = allKeywords;
+
+  }
+
+  if (allPeople != ""){
+
+    if (finalQuery == ""){
+
+      finalQuery = allPeople;
+
+    }
+    else{
+
+      finalQuery = finalQuery + " AND (" + allPeople + ")";
+
+    }
+
+  }
+
+  if (allOrganisations != ""){
+
+    if (finalQuery == ""){
+
+      finalQuery = allOrganisations;
+
+    }
+    else{
+
+      finalQuery = finalQuery + " AND (" + allOrganisations + ")";
+
+    }
+
+  }
+
+  $.get("https://newsapi.org/v2/everything?q=" + finalQuery + "&from=" + publishDate + "&to=" + publishDate + "&sortBy=relevancy&apiKey=6d5b5753b28949f59213beed43d315a2")
+
+  .done(function(newsApiData) {
+
+    console.log('Status: ' + newsApiData.status);
+
+    for (i = 0; i < 10; i++){
+
+      x = newsApiData.articles[i];
+
+      relatedArticles.push(newsApiData.articles[i]);
+
+    }
+
+  });
+
+  return relatedArticles;
 
 };
 

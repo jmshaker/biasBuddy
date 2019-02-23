@@ -7,22 +7,15 @@ let contentText = document.getElementById('contentText');
 let keywordsText = document.getElementById('keywordsText');
 let summaryText = document.getElementById('summaryText');
 
-/*let siteContentButton = document.getElementById('siteContent');
-let wordAnalysisButton = document.getElementById('wordAnalysis');
-let furtherReadingButton = document.getElementById('furtherReading');
+let backButton = document.getElementById('backButton');
 
-siteContentButton.addEventListener('click', function() { siteContent(); })
+backButton.addEventListener('click', function() { popupMain(); })
 
-wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
-
-furtherReadingButton.addEventListener('click', function() { furtherReading(); })*/
-
-
-chrome.storage.local.get('siteAddress', function(data) {
+/*chrome.storage.local.get('siteAddress', function(data) {
 
   siteAddressText.innerHTML = data.siteAddress;
 
-});
+});*/
 
 chrome.storage.local.get('siteStatus', function(data) {
 
@@ -32,7 +25,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="green";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/trusted.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/trusted.png";
 
     break;
 
@@ -40,7 +33,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="aqua";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/satirical.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/satirical.png";
 
     break;
 
@@ -48,7 +41,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="red";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/fake.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/fake.png";
 
     break;
 
@@ -56,7 +49,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="orange";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/unknown.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/unknown.png";
 
     break;
 
@@ -119,20 +112,8 @@ chrome.storage.local.get('summary', function(data) {
 
 });
 
-function siteContent(){
+function popupMain(){
 
-  
-
-}
-
-function wordAnalysis(){
-
-  document.getElementById("wordAnalysis").style.backgroundColor="black";
-
-}
-
-function furtherReading(){
-
-  document.getElementById("furtherReading").style.backgroundColor="black";
+  window.location.href="popup.html";
 
 }

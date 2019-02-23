@@ -1,15 +1,12 @@
-/*let articleStatusText = document.getElementById('articleStatusText');
-let siteAddressText = document.getElementById('siteAddressText');
-let authorsText = document.getElementById('authorsText');
-let titleText = document.getElementById('titleText');
-let publishDateText = document.getElementById('publishDateText');
-let contentText = document.getElementById('contentText');
-let keywordsText = document.getElementById('keywordsText');
-let summaryText = document.getElementById('summaryText');*/
+let websiteNameText = document.getElementById('websiteName');
+
+let websiteStatusButton = document.getElementById('websiteStatus');
 
 let siteContentButton = document.getElementById('siteContent');
 let wordAnalysisButton = document.getElementById('wordAnalysis');
 let furtherReadingButton = document.getElementById('furtherReading');
+
+websiteStatusButton.addEventListener('click', function() { displaySiteInfo(); })
 
 siteContentButton.addEventListener('click', function() { siteContent(); })
 
@@ -17,12 +14,11 @@ wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
 
 furtherReadingButton.addEventListener('click', function() { furtherReading(); })
 
+/*chrome.storage.local.get('siteName', function(data) {
 
-chrome.storage.local.get('siteAddress', function(data) {
+  websiteNameText.innerHTML = data.siteName;
 
-  siteAddressText.innerHTML = data.siteAddress;
-
-});
+});*/
 
 chrome.storage.local.get('siteStatus', function(data) {
 
@@ -32,7 +28,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="green";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/trusted.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/trusted.png";
 
     break;
 
@@ -40,7 +36,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="aqua";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/satirical.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/satirical.png";
 
     break;
 
@@ -48,7 +44,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="red";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/fake.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/fake.png";
 
     break;
 
@@ -56,7 +52,7 @@ chrome.storage.local.get('siteStatus', function(data) {
 
     document.getElementById("websiteStatus").style.backgroundColor="orange";
 
-    document.getElementById("websiteStatusIcon").src="siteTypeIcons/unknown.png";
+    document.getElementById("websiteStatus").src="siteTypeIcons/unknown.png";
 
     break;
 
@@ -64,60 +60,66 @@ chrome.storage.local.get('siteStatus', function(data) {
 
 });
 
-/*chrome.storage.local.get('authors', function(data) {
+function displaySiteInfo(){
+  
+  chrome.storage.local.get('siteName', function(data) {
 
-  authorsText.innerHTML = data.authors;
+    websiteNameText.innerHTML = data.siteName;
+  
+  });
 
-});
+  chrome.storage.local.get('siteStatus', function(data) {
 
-chrome.storage.local.get('title', function(data) {
+    if (document.getElementById("websiteName").style.visibility == "visible"){
 
-  titleText.innerHTML = data.title;
+      hideSiteInfo();
 
-});
+    }
+    else{
 
-chrome.storage.local.get('publishDate', function(data) {
+      document.getElementById("websiteName").style.visibility = "visible";
 
-  if (data.publishDate == undefined){
+      document.getElementById("websiteType").style.visibility = "visible";
+    
+      switch(data.siteStatus){
+    
+        case "trusted":
+    
+        document.getElementById("websiteType").innerHTML = "TRUSTED SITE"
+    
+        break;
+    
+        case "satirical":
+    
+        document.getElementById("websiteType").innerHTML = "SATIRICAL SITE"
+    
+        break;
+    
+        case "fake":
+    
+        document.getElementById("websiteType").innerHTML = "FAKE NEWS SITE"
+    
+        break;
+    
+        case "unknown":
+    
+        document.getElementById("websiteType").innerHTML = "UNKNOWN SITE"
+    
+        break;
+    
+      }
+    }
+  });
 
-    chrome.storage.local.set({'articleStatus': 'No article found'}, function() {
-    });
+}
 
-  }
-  else{
+function hideSiteInfo(){
 
-    chrome.storage.local.set({'articleStatus': 'Article found'}, function() {
-    });
+  document.getElementById("websiteName").style.visibility = "hidden";
 
-    publishDateText.innerHTML = data.publishDate;
+  document.getElementById("websiteType").style.visibility = "hidden";
 
-  }
-
-});
-
-chrome.storage.local.get('articleStatus', function(data) {
-
-  articleStatusText.innerHTML = data.articleStatus;
-
-});
-
-chrome.storage.local.get('content', function(data) {
-
-  contentText.innerHTML = data.content;
-
-});
-
-chrome.storage.local.get('keywords', function(data) {
-
-  keywordsText.innerHTML = data.keywords;
-
-});
-
-chrome.storage.local.get('summary', function(data) {
-
-  summaryText.innerHTML = data.summary;
-
-});*/
+}
 
 function siteContent(){
 
