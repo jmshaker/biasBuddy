@@ -3,38 +3,52 @@ function checkSiteAddress(siteAddress){
   var siteStatus = "";
 
   var trustedSite = false, satiricalSite = false, fakeSite = false;
+
+  var siteBias = "";
   
-  trustedSite = isSiteTrusted(siteAddress);
+  //trustedSite = isSiteTrusted(siteAddress);
 
-  if (trustedSite == true){
+  siteBias = isSiteTrusted(siteAddress);
 
-    return "trusted";
+  if ((siteBias == "leftcenter") || (siteBias == "center") || (siteBias == "right-center"))
+  {
+    trustedSite == true
+
+    return "trusted_" + siteBias
 
   }
   else{
 
-    satiricalSite = isSiteSatirical(siteAddress);
+    if ((siteBias == "left") || (siteBias == "right") || (siteBias == "conspiracy") || (siteBias == "pro-science")){
 
-    if (satiricalSite == true){
-
-      return "satirical";
-
+      return "biased_" + siteBias
     }
     else{
 
-      fakeSite = isSiteFake(siteAddress);
+      satiricalSite = isSiteSatirical(siteAddress);
+
+      if (satiricalSite == true){
   
-      if (fakeSite == true){
-  
-        return "fake";
+        return "satirical";
   
       }
       else{
-
-        return "unknown";
-
-      }
   
+        fakeSite = isSiteFake(siteAddress);
+    
+        if (fakeSite == true){
+    
+          return "fake";
+    
+        }
+        else{
+  
+          return "unknown";
+  
+        }
+    
+      }
+
     }
 
   }
@@ -43,11 +57,13 @@ function checkSiteAddress(siteAddress){
 
 function isSiteTrusted(siteAddress){
 
-  var trustedSite = false;
+  var bias = "";
+
+  //var trustedSite = false;
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/whitelistedSites", {"url": siteAddress})
+  /*$.post("http://127.0.0.1:5002/whitelistedSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -59,7 +75,21 @@ function isSiteTrusted(siteAddress){
 
   });
 
-  return trustedSite;
+  return trustedSite;*/
+
+  $.post("http://127.0.0.1:5002/biasedSites", {"url": siteAddress})
+
+  .done(function(data) {
+
+    if (data.biasedSites.length == 1){
+  
+      bias = data.biasedSites[0];
+
+    }
+
+  });
+
+  return bias;
 
 };
 
@@ -91,11 +121,11 @@ function isSiteFake(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/blacklistedSites", {"url": siteAddress})
+  $.post("http://127.0.0.1:5002/fakeNewsSites", {"url": siteAddress})
 
   .done(function(data) {
 
-    if (data.blacklistedSites.length == 1){
+    if (data.fakeNewsSites.length == 1){
   
       fakeSite = true;
 
@@ -133,6 +163,19 @@ function retrieveSiteInfo(tabId){
       chrome.storage.local.set({'publishDate': data.publishDate}, function() {
       });
 
+      if (data.publishDate == "null"){
+
+        chrome.storage.local.set({'articleStatus': "Article not found"}, function() {
+        });
+
+      }
+      else{
+
+        chrome.storage.local.set({'articleStatus': "Article found"}, function() {
+        });
+
+      }
+
       chrome.storage.local.set({'content': data.content}, function() {
       });
 
@@ -147,29 +190,49 @@ function retrieveSiteInfo(tabId){
       chrome.storage.local.set({'siteStatus': siteStatus}, function() {
       });
 
-      if (data.content != undefined){
+      changeIconColor(tabId);
 
-        var fakeWords = getFakeWords(data.content);
+      chrome.storage.local.get('articleStatus', function(y) {
 
-        chrome.storage.local.set({'fakeWords': fakeWords}, function() {
-        });
+        if (y.articleStatus == "Article found"){
 
-        //
+          if (data.content != undefined){
 
-        var relatedArticles;
+            var fakeWords = getFakeWords(data.content);
+    
+            chrome.storage.local.set({'fakeWords': fakeWords}, function() {
+            });
+    
+            //
+    
+            var relatedArticles;
+    
+            chrome.storage.local.get('publishDate', function(x) {
+    
+              relatedArticles = getRelatedArticles(data, x.publishDate);
+            
+              chrome.storage.local.set({'relatedArticles': relatedArticles}, function() {
+              });
+    
+            });
+    
+            //
+    
+          }
+          
+        }
+        else{
 
-        chrome.storage.local.get('publishDate', function(x) {
-
-          relatedArticles = getRelatedArticles(data, x.publishDate);
-        
-          chrome.storage.local.set({'relatedArticles': relatedArticles}, function() {
+          chrome.storage.local.set({'fakeWords': ""}, function() {
+          });
+            
+          chrome.storage.local.set({'relatedArticles': ""}, function() {
           });
 
-        });
+        }
 
-        //
-
-      }
+      });
+      
 
     })
 
@@ -217,7 +280,6 @@ function retrieveSiteInfo(tabId){
     });
 
   });
-
 };
 
 
@@ -251,6 +313,71 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
 
+function removeRedundantWords(title, words){
+
+  allWords = words.filter( onlyUnique );
+
+  for (i = 0; i < words.length; i++){
+
+    if (!title.includes(words[i])){
+
+      words.splice(i, 1);
+      i = i - 1;
+
+    }
+  }
+
+  for (i = 0; i < words.length; i++){
+
+    var position = i;
+    var isDouble = false;
+
+    for(j = 0; j < words.length; j++){
+
+      if (j != position){
+
+        if (words[j].includes(words[position])){
+
+          isDouble = true;
+          break;
+
+        }
+
+      }
+
+    }
+
+    if (isDouble == true){
+
+      words.splice(i, 1);
+      i = i - 1;
+
+    }
+
+  }
+
+  var stringWords = "";
+
+  for (i = 0; i < words.length; i++){
+
+    if (stringWords == ""){
+
+      stringWords = stringWords + words[i];
+
+    }
+    else
+    {
+
+      stringWords = stringWords + " OR " + words[i];
+  
+    }
+
+  }
+
+  return stringWords;
+
+}
+
 function getRelatedArticles(data, publishDate){
 
   var relatedArticles = [];
@@ -259,69 +386,11 @@ function getRelatedArticles(data, publishDate){
 
   $.ajaxSetup({async: false});
 
-  data.keywords = data.keywords.filter( onlyUnique );
-  
-  for (i = 0; i < data.keywords.length; i++){
+  allKeywords = removeRedundantWords(data.title, data.keywords);
 
-    //if (data.title.includes(data.keywords[i])){
+  allPeople = removeRedundantWords(data.title, data.people);
 
-      if (allKeywords == "") {
-
-        allKeywords = allKeywords + data.keywords[i]
-  
-      }
-      else
-      {
-  
-        allKeywords = allKeywords + " OR " + data.keywords[i];
-    
-      }
-
-  //}
-
-  }
-
-  data.people = data.people.filter( onlyUnique );
-
-  for (i = 0; i < data.people.length; i++){
-
-    if (data.title.includes(data.people[i])){
-
-      if (allPeople == ""){
-
-        allPeople = allPeople + data.people[i];
-
-      }
-      else
-      {
-
-        allPeople = allPeople + " OR " + data.people[i];
-    
-      }
-
-    }
-  }
-
-  data.organisations = data.organisations.filter( onlyUnique );
-
-  for (i = 0; i < data.organisations.length; i++){
-
-    if (data.title.includes(data.organisations[i])){
-
-      if (allOrganisations == ""){
-
-        allOrganisations = allOrganisations + data.organisations[i];
-
-      }
-      else
-      {
-
-        allOrganisations = allOrganisations + " OR " + data.organisations[i];
-    
-      }
-
-    }
-  }
+  allOrganisations = removeRedundantWords(data.title, data.organisations);
 
   if (allKeywords != ""){
 
@@ -378,6 +447,60 @@ function getRelatedArticles(data, publishDate){
   return relatedArticles;
 
 };
+
+function changeIconColor(tabId){
+
+  chrome.storage.local.get('siteStatus', function(data) {
+  
+    switch(data.siteStatus){
+
+      case "trusted_leftcenter":
+      case "trusted_center":
+      case "trusted_right-center":
+
+      chrome.browserAction.setIcon({path: "/pluginImages/trusted.png", tabId: tabId});
+
+      break;
+
+      case "biased_left":
+      case "biased_right":
+      case "biased_conspiracy":
+      case "biased_pro-science":
+
+      chrome.browserAction.setIcon({path: "/pluginImages/biased2.png", tabId: tabId});
+
+      break;
+
+      case "unknown":
+
+      chrome.browserAction.setIcon({path: "/pluginImages/unknown.png", tabId: tabId});
+
+      break;
+
+      case "fake":
+
+      chrome.browserAction.setIcon({path: "/pluginImages/fake.png", tabId: tabId});
+
+      break;
+
+      case "satirical":
+
+      chrome.browserAction.setIcon({path: "/pluginImages/satirical.png", tabId: tabId});
+
+      break;
+
+      default:
+
+      chrome.browserAction.setIcon({path: "/pluginImages/img.png", tabId: tabId});
+
+      break;
+
+    }
+
+  });
+
+
+}
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 

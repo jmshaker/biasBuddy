@@ -1,5 +1,5 @@
 body{
-	height: 200px;
+	height: 160px;
     width: 200px;
 }
 
@@ -28,8 +28,8 @@ body{
 
 #websiteName{
 
-    top:5px;
-    left:0px;
+    top:40px;
+    /*left:0px;*/
     position:fixed;
 	height:40px;
     width:100%;
@@ -40,8 +40,8 @@ body{
 
 #websiteType{
 
-    top:5px;
-    left:150px;
+    top:45px;
+    /*left:150px;*/
     position:fixed;
 	height:40px;
     width:100%;
@@ -95,9 +95,27 @@ body{
 
 #footer {
     bottom:0px;
-    background-color:aqua;
-	position:fixed;
+    background-color: white;
+    position:fixed;
 	height:60px;
 	width: 100%;
-	z-index: 1;
+	z-index: 2;
+    display: block;
+}
+
+#minimisePopup {
+
+    left:55%;
+    position:fixed;
+	height:20px;
+    width:20px;
+    background-color: white;
+	/*z-index: 2;*/
+
+}
+
+#footer p {
+
+    text-align: center;
+
 }
