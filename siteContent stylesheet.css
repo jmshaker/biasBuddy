@@ -29,33 +29,33 @@ body{
 #websiteStatus{
 
     top:5px;
-    left:50%;
+    left:100px;
     position:fixed;
 	height:40px;
     width:40px;
     border-radius:20px;
-    background-color: white;	
+    background-color: white;
+	/*z-index: 2;*/
+	
 }
 
 #websiteName{
 
-    top:5px;
-    left:0px;
+    top:0px;
+    left:1000px;
     position:fixed;
-	height:40px;
+	height:10px;
     width:100%;
-    visibility: hidden;
-    
+
 }
 
 #websiteType{
 
-    top:5px;
-    left:150px;
+    top:10px;
+    left:1000px;
     position:fixed;
-	height:40px;
+	height:10px;
     width:100%;
-    visibility: hidden;
     
 }
 

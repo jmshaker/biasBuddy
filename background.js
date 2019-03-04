@@ -6,49 +6,38 @@ function checkSiteAddress(siteAddress){
 
   var siteBias = "";
   
-  //trustedSite = isSiteTrusted(siteAddress);
-
   siteBias = isSiteTrusted(siteAddress);
 
-  if ((siteBias == "leftcenter") || (siteBias == "center") || (siteBias == "right-center"))
+  if (siteBias != "")
   {
-    trustedSite == true
 
-    return "trusted_" + siteBias
+    return siteBias;
 
   }
   else{
 
-    if ((siteBias == "left") || (siteBias == "right") || (siteBias == "conspiracy") || (siteBias == "pro-science")){
+    satiricalSite = isSiteSatirical(siteAddress);
 
-      return "biased_" + siteBias
+    if (satiricalSite == true){
+
+      return "satirical";
+
     }
     else{
 
-      satiricalSite = isSiteSatirical(siteAddress);
-
-      if (satiricalSite == true){
+      fakeSite = isSiteFake(siteAddress);
   
-        return "satirical";
+      if (fakeSite == true){
+  
+        return "fake";
   
       }
       else{
-  
-        fakeSite = isSiteFake(siteAddress);
-    
-        if (fakeSite == true){
-    
-          return "fake";
-    
-        }
-        else{
-  
-          return "unknown";
-  
-        }
-    
-      }
 
+        return "unknown";
+
+      }
+  
     }
 
   }
@@ -137,7 +126,6 @@ function isSiteFake(siteAddress){
 
 };
 
-
 function retrieveSiteInfo(tabId){
 
   var url = "";
@@ -185,6 +173,9 @@ function retrieveSiteInfo(tabId){
       chrome.storage.local.set({'summary': data.summary}, function() {
       });
 
+      chrome.storage.local.set({'noNewsAPIdata': "true"}, function() {
+      });
+
       var siteStatus = checkSiteAddress(url);
 
       chrome.storage.local.set({'siteStatus': siteStatus}, function() {
@@ -208,10 +199,45 @@ function retrieveSiteInfo(tabId){
             var relatedArticles;
     
             chrome.storage.local.get('publishDate', function(x) {
-    
-              relatedArticles = getRelatedArticles(data, x.publishDate);
+
+              var today = new Date();
+              today.dd = today.getDate();
+              today.mm = today.getMonth() + 1; //January is 0!
+              today.yyyy = today.getFullYear();
+
+              var publishDate = Date.parse(x.publishDate);
+
+              var daysSincePublished = Math.floor((today - publishDate)/(1000*60*60*24));
+
+              if (daysSincePublished < 180){
+
+                chrome.storage.local.set({'noNewsAPIdata': "false"}, function() {
+                });
+               
+                relatedArticles = getRelatedArticles(data, x.publishDate);
+
+                var relatedArticlesBias = [];
+
+                for (i = 0; i < relatedArticles.length; i++){
+
+                  siteBias = isSiteTrusted(relatedArticles[i].url);
+
+                  relatedArticlesBias.push(siteBias);
+
+                }
+
+              }
+              /*else{
+
+                chrome.storage.local.set({'noNewsAPIdata': "true"}, function() {
+                });
+
+              }*/
             
               chrome.storage.local.set({'relatedArticles': relatedArticles}, function() {
+              });
+
+              chrome.storage.local.set({'relatedArticlesBias': relatedArticlesBias}, function() {
               });
     
             });
@@ -282,7 +308,6 @@ function retrieveSiteInfo(tabId){
   });
 };
 
-
 function getFakeWords(content){
 
   var fakeWordsList = [];
@@ -313,30 +338,38 @@ function onlyUnique(value, index, self) {
   return self.indexOf(value) === index;
 }
 
+function arrayDiff(a, b) {
+  return a.filter( 
+    function(el) {
+      return b.indexOf(el) < 0;
+    }
+  );
+}
+
 function removeRedundantWords(title, words){
 
   allWords = words.filter( onlyUnique );
 
-  for (i = 0; i < words.length; i++){
+  for (i = 0; i < allWords.length; i++){
 
-    if (!title.includes(words[i])){
+    if (!(title.toLowerCase()).includes(allWords[i].toLowerCase())){
 
-      words.splice(i, 1);
+      allWords.splice(i, 1);
       i = i - 1;
 
     }
   }
 
-  for (i = 0; i < words.length; i++){
+  for (i = 0; i < allWords.length; i++){
 
     var position = i;
     var isDouble = false;
 
-    for(j = 0; j < words.length; j++){
+    for (j = 0; j < allWords.length; j++){
 
       if (j != position){
 
-        if (words[j].includes(words[position])){
+        if (allWords[j].includes(allWords[position])){
 
           isDouble = true;
           break;
@@ -349,7 +382,7 @@ function removeRedundantWords(title, words){
 
     if (isDouble == true){
 
-      words.splice(i, 1);
+      allWords.splice(i, 1);
       i = i - 1;
 
     }
@@ -358,22 +391,22 @@ function removeRedundantWords(title, words){
 
   var stringWords = "";
 
-  for (i = 0; i < words.length; i++){
+  for (i = 0; i < allWords.length; i++){
 
     if (stringWords == ""){
 
-      stringWords = stringWords + words[i];
+      stringWords = stringWords + allWords[i];
 
     }
     else
     {
 
-      stringWords = stringWords + " OR " + words[i];
+      stringWords = stringWords + " OR " + allWords[i];
   
     }
 
   }
-
+  
   return stringWords;
 
 }
@@ -391,6 +424,30 @@ function getRelatedArticles(data, publishDate){
   allPeople = removeRedundantWords(data.title, data.people);
 
   allOrganisations = removeRedundantWords(data.title, data.organisations);
+
+  var hello = allKeywords.split(" OR ");
+
+  var y = removeRedundantWords(allPeople, hello);
+
+  //var z = removeRedundantWords(allOrganisations, hello);
+
+  var i = y.split(" OR ");
+
+  //var j = z.split(" OR ");
+
+  hello = arrayDiff(hello, i);
+
+//
+
+  var z = removeRedundantWords(allOrganisations, hello);
+
+  var j = z.split(" OR ");
+
+//
+
+  var hello = arrayDiff(hello, j);
+
+  allKeywords = hello.toString().split(",").join(" OR ");
 
   if (allKeywords != ""){
 
@@ -434,7 +491,7 @@ function getRelatedArticles(data, publishDate){
 
     console.log('Status: ' + newsApiData.status);
 
-    for (i = 0; i < 10; i++){
+    for (i = 0; i < newsApiData.articles.length; i++){
 
       x = newsApiData.articles[i];
 
@@ -454,18 +511,18 @@ function changeIconColor(tabId){
   
     switch(data.siteStatus){
 
-      case "trusted_leftcenter":
-      case "trusted_center":
-      case "trusted_right-center":
+      case "leftcenter":
+      case "center":
+      case "right-center":
+      case "pro-science":
 
       chrome.browserAction.setIcon({path: "/pluginImages/trusted.png", tabId: tabId});
 
       break;
 
-      case "biased_left":
-      case "biased_right":
-      case "biased_conspiracy":
-      case "biased_pro-science":
+      case "left":
+      case "right":
+      case "conspiracy":
 
       chrome.browserAction.setIcon({path: "/pluginImages/biased2.png", tabId: tabId});
 
@@ -499,7 +556,6 @@ function changeIconColor(tabId){
 
   });
 
-
 }
 
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -530,7 +586,7 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
 
   chrome.declarativeContent.onPageChanged.addRules([{
     conditions: [new chrome.declarativeContent.PageStateMatcher({
-      pageUrl: {/*hostEquals: 'developer.chrome.com'*/ schemes: ['https']},
+      pageUrl: {schemes: ['https']},
     })
     ],
       actions: [new chrome.declarativeContent.ShowPageAction()]

@@ -16,7 +16,7 @@ body{
 #websiteStatus{
 
     top:5px;
-    left:50%;
+    left:100px;
     position:fixed;
 	height:40px;
     width:40px;
@@ -28,25 +28,21 @@ body{
 
 #websiteName{
 
-    top:40px;
-    /*left:0px;*/
+    top:0px;
+    left:1000px;
     position:fixed;
-	height:40px;
+	height:10px;
     width:100%;
-    /*z-index: 1;*/
-    visibility: hidden;
-    
+
 }
 
 #websiteType{
 
-    top:45px;
-    /*left:150px;*/
+    top:10px;
+    left:1000px;
     position:fixed;
-	height:40px;
+	height:10px;
     width:100%;
-    /*z-index: 1;*/
-    visibility: hidden;
     
 }
 
@@ -105,7 +101,7 @@ body{
 
 #minimisePopup {
 
-    left:55%;
+    left:50%;
     position:fixed;
 	height:20px;
     width:20px;
