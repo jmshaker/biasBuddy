@@ -3,17 +3,20 @@
 
   <head>
 
-    <link href="wordAnalysis stylesheet.css" rel="stylesheet" type="text/css">
+    <link href="setPublishDate stylesheet.css" rel="stylesheet" type="text/css">
 
-    <script src="jquery-3.3.1.min.js"></script>
+    <link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="/resources/demos/style.css">
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>jQuery UI Datepicker - Default functionality</title>
 
   </head>
 
   <body>
 
     <div id="header">
-
-      <input type="image" id="backButton" src="pluginImages/back.png"/>
 
       <input type="image" id="websiteStatus" src="siteTypeIcons/unknown.png"/>
 
@@ -25,22 +28,8 @@
 
     <div id="other">
 
-      <p id="summaryText">
-      
-      </p>
-
-      <p id="keywordsText">
-      
-      </p>
-
-      <p id="fakeWordsText">
-
-      </p>
-
-      <p id="sentimentText">
-      
-      </p>
-      
+      <p>Date: <input type="text" id="datepicker"></p>
+      <script src="setPublishDate.js"></script>
 
     </div>
 
@@ -53,9 +42,7 @@
 
     </div>
 
-    <script src="wordAnalysis.js"></script>
-
-    <script src="popup.js"></script>
+    <script src="setPublishDate.js"></script>
 
   </body>
 

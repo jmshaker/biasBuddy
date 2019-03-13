@@ -1,5 +1,5 @@
 body{
-	height: 300px;
+	height: 160px;
     width: 200px;
 }
 
@@ -11,19 +11,6 @@ body{
 	width: 100%;
     z-index: 2;
     display: block;
-}
-
-#backButton{
-
-    top:3px;
-    left:5%;
-    position:fixed;
-	height:20px;
-    width:20px;
-    border-radius:20px;
-    background-color: white;
-	z-index: 1;
-	
 }
 
 #websiteStatus{
@@ -59,13 +46,7 @@ body{
     
 }
 
-#other{
-    top:50px;
-    position: relative;
-	height:/*270px*/relative;
-	width: 100%;
-	z-index: 1;
-}
+
 
 #footer {
     bottom:0px;
@@ -79,8 +60,7 @@ body{
 
 #minimisePopup {
 
-    border-top: 5px;
-    left:55%;
+    left:50%;
     position:fixed;
 	height:20px;
     width:20px;

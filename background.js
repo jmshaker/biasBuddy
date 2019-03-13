@@ -138,7 +138,7 @@ function retrieveSiteInfo(tabId){
 
   chrome.storage.local.set({'siteAddress': url}, function() {
 
-    $.post("http://127.0.0.1:5002/hello2", {"url": url})
+    $.post("http://127.0.0.1:5002/hello", {"url": url})
     
     .done(function(data) {
 
@@ -193,7 +193,28 @@ function retrieveSiteInfo(tabId){
     
             chrome.storage.local.set({'fakeWords': fakeWords}, function() {
             });
-    
+
+            var types = getTypes(fakeWords);
+
+            chrome.storage.local.set({'types': types}, function() {
+            });
+
+            var definitions = getDefinitions(fakeWords);
+
+            chrome.storage.local.set({'definitions': definitions}, function() {
+            });
+
+            var sentences = getSentences(data.content)
+
+            chrome.storage.local.set({'sentences': sentences}, function() {
+            });
+            
+            var sentiment = getSentiment(data.content);
+
+            chrome.storage.local.set({'sentiment': sentiment}, function() {
+            });
+
+
             //
     
             var relatedArticles;
@@ -202,7 +223,7 @@ function retrieveSiteInfo(tabId){
 
               var today = new Date();
               today.dd = today.getDate();
-              today.mm = today.getMonth() + 1; //January is 0!
+              today.mm = today.getMonth() + 1;
               today.yyyy = today.getFullYear();
 
               var publishDate = Date.parse(x.publishDate);
@@ -249,10 +270,37 @@ function retrieveSiteInfo(tabId){
         }
         else{
 
+          chrome.storage.local.get('content', function(y) {
+
+            if (y.content.trim().split(/\s+/).length > 300){
+
+              var NotificationOptions = {
+
+                type: 'basic',
+                iconUrl: 'pluginImages/icon.png',
+                title: 'Is this an article?',
+                message: 'We have found article content, but no publish date. Please manually enter it by opening the biasBuddy extension.'
+
+              };
+
+              chrome.notifications.create('noPublishDateNotif', NotificationOptions);
+
+              chrome.notifications.onClicked.addListener(notificationClicked);
+
+            }
+
+          });
+
           chrome.storage.local.set({'fakeWords': ""}, function() {
           });
             
           chrome.storage.local.set({'relatedArticles': ""}, function() {
+          });
+
+          chrome.storage.local.set({'sentences': ""}, function() {
+          });
+
+          chrome.storage.local.set({'sentiment': ""}, function() {
           });
 
         }
@@ -308,6 +356,16 @@ function retrieveSiteInfo(tabId){
   });
 };
 
+function notificationClicked() {
+
+  chrome.tabs.getCurrent(function (tab) {
+
+    chrome.browserAction.setPopup({"tabId":tab.tabId,"popup":'setPublishDate.html'});
+
+  });
+
+}
+
 function getFakeWords(content){
 
   var fakeWordsList = [];
@@ -331,6 +389,94 @@ function getFakeWords(content){
   });
 
   return fakeWordsList;
+
+};
+
+function getSentences(content){
+
+  var sentences = [];
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/sentences", {"content": content})
+
+  .done(function(data) {
+
+    if (data.sentences.length != 0){
+  
+      for (var i = 0; i < data.sentences.length; i++){
+
+        sentences.push(data.sentences[i]);
+      
+      }
+
+    }
+
+  });
+
+  return sentences;
+
+};
+
+function getTypes(fakeWords){
+
+  var types = [];
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/keywordsType", {word: fakeWords})
+
+  .done(function(y) {
+
+    types.push(y.type)
+
+  });
+
+  return types;
+
+}
+
+function getDefinitions(fakeWords){
+
+  var definitions = [];
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/keywordsDef", {word: fakeWords})
+
+  .done(function(y) {
+
+    definitions.push(y.definition)
+
+  });
+
+  return definitions;
+
+}
+
+function getSentiment(content){
+
+  var sentiment = [];
+
+  $.ajaxSetup({async: false});
+
+  $.post("http://127.0.0.1:5002/sentiment", {"content": content})
+
+  .done(function(data) {
+
+    if (data.sentiments.length != 0){
+  
+      for (var i = 0; i < data.sentiments.length; i++){
+
+        sentiment.push(data.sentiments[i]);
+      
+      }
+
+    }
+
+  });
+
+  return sentiment;
 
 };
 
@@ -432,8 +578,6 @@ function getRelatedArticles(data, publishDate){
   //var z = removeRedundantWords(allOrganisations, hello);
 
   var i = y.split(" OR ");
-
-  //var j = z.split(" OR ");
 
   hello = arrayDiff(hello, i);
 

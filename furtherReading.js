@@ -116,12 +116,27 @@ chrome.storage.local.get('noNewsAPIdata', function(x) {
 
       if (data.relatedArticles.length > 0){
 
-        for (i = 0; i < data.relatedArticles.length; i++){
+        /*for (i = 0; i < data.relatedArticles.length; i++){
       
           document.getElementById("relatedArticles").innerHTML = document.getElementById("relatedArticles").innerHTML + "<p><b>" + data.relatedArticles[i].source.name + "</b></p>" + "<a href=" + data.relatedArticles[i].url + " target=" + "blank>" + data.relatedArticles[i].title + "</a> <br />"
           + "<img src=" + data.relatedArticles[i].urlToImage + " style=" + "width:200px;height:100px;>";
       
-        }
+        }*/
+
+        chrome.storage.local.get('relatedArticlesBias', function(x) {
+
+          for (i = 0; i < data.relatedArticles.length; i++){
+        
+            document.getElementById("relatedArticles").innerHTML = document.getElementById("relatedArticles").innerHTML + "<div style='display:inline-block; vertical-align:top;'><p style='width:100px'><b>" + data.relatedArticles[i].source.name + "</b></p></div> <p style='width:100px; display:inline-block; vertical-align:top; float:right; text-align:right;'><b>" + x.relatedArticlesBias[i] + "</p></b>" + "<a href=" + data.relatedArticles[i].url + " target=" + "blank>" + data.relatedArticles[i].title + "</a> <br />"
+            + "<img src=" + data.relatedArticles[i].urlToImage + " style=" + "width:200px;height:100px;>";
+        
+          }
+
+        });
+
+        $('#other').animate({height:'+60px'}, 0);
+
+        document.getElementById('#other').style.height = document.getElementById('#other').style.height + "60px";
 
       }
       else{
@@ -135,8 +150,20 @@ chrome.storage.local.get('noNewsAPIdata', function(x) {
   }
   else{
 
-    document.getElementById("relatedArticles").innerHTML = "<p><b> The current article was written over 6 months ago. News API doesn't index articles written this long ago. </b></p>";
+    chrome.storage.local.get('articleStatus', function(data) {
+  
+      if (data.articleStatus == "Article found"){
+  
+        document.getElementById("relatedArticles").innerHTML = "<p><b> The current article was written over 6 months ago. News API doesn't index articles written this long ago. </b></p>";
+  
+      }
+      else{
 
+        document.getElementById("relatedArticles").innerHTML = "<p><b> No article found. </b></p>";
+
+      }
+    
+    });
   }
 
 });
