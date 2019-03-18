@@ -3,14 +3,9 @@
 
   <head>
 
-    <link href="setPublishDate stylesheet.css" rel="stylesheet" type="text/css">
+    <link href="css/setPublishDate stylesheet.css" rel="stylesheet" type="text/css">
 
-    <link href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link href="/resources/demos/style.css">
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>jQuery UI Datepicker - Default functionality</title>
+    <script src="js/jquery-3.3.1.min.js"></script>
 
   </head>
 
@@ -28,21 +23,32 @@
 
     <div id="other">
 
-      <p>Date: <input type="text" id="datepicker"></p>
-      <script src="setPublishDate.js"></script>
+      <p>Article published date: <input id="myTextBox" type="text" style="width:100px"/></p>
+
+      <button id="setPublishDateButton" type="button" disabled="true" style="width:60px"> Submit </button>
 
     </div>
 
     <div id="footer">
 
-      <input type="image" id="minimisePopup" src="pluginImages/img.png"/>
+      <input type="image" id="optionsButton" src="pluginImages/options.png"/>
 
       <p style="margin-top: 20px"><b>&#169 2019 BiasBuddy</b></p>
       <p style="margin-top: -5px">Plugin developed by James Morgan.</p>
 
+      <div id= "mbfc">
+
+        <p style="display:inline-block; margin-top:-10px">Powered by</p> 
+  
+        <a href="https://mediabiasfactcheck.com/" target="blank"> <input style="display:inline-block; left:90px;" type="image" id="mbfclogo" src="pluginImages/mbfc logo.png"/> </a>
+          
+      </div>
+
     </div>
 
-    <script src="setPublishDate.js"></script>
+    <script src="js/setPublishDate.js"></script>
+
+    <script src="js/background.js"></script>
 
   </body>
 

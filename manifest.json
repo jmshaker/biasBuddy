@@ -7,7 +7,7 @@
     "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "notifications"],
 
     "background": {
-        "scripts": ["background.js", "jquery-3.3.1.min.js"],
+        "scripts": ["js/background.js", "js/jquery-3.3.1.min.js"],
         "persistent": false
       },
 

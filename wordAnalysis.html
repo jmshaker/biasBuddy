@@ -3,11 +3,37 @@
 
   <head>
 
-    <link href="wordAnalysis stylesheet.css" rel="stylesheet" type="text/css">
+    <link href="css/wordAnalysis stylesheet.css" rel="stylesheet" type="text/css">
 
-    <script src="jquery-3.3.1.min.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
 
   </head>
+
+  <style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+    
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 1;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+    </style>
 
   <body>
 
@@ -46,16 +72,24 @@
 
     <div id="footer">
 
-      <input type="image" id="minimisePopup" src="pluginImages/img.png"/>
+      <input type="image" id="optionsButton" src="pluginImages/options.png"/>
 
       <p style="margin-top: 20px"><b>&#169 2019 BiasBuddy</b></p>
       <p style="margin-top: -5px">Plugin developed by James Morgan.</p>
 
+      <div id= "mbfc">
+
+        <p style="display:inline-block; margin-top:-10px">Powered by</p> 
+  
+        <a href="https://mediabiasfactcheck.com/" target="blank"> <input style="display:inline-block; left:90px;" type="image" id="mbfclogo" src="pluginImages/mbfc logo.png"/> </a>
+          
+      </div>
+
     </div>
 
-    <script src="wordAnalysis.js"></script>
+    <script src="js/wordAnalysis.js"></script>
 
-    <script src="popup.js"></script>
+    <script src="js/popup.js"></script>
 
   </body>
 
