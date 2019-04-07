@@ -4,7 +4,7 @@
     "options_page": "options.html",
     "description": "Bias detection extension",
     "version": "1.0",
-    "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "notifications"],
+    "permissions": ["activeTab", "declarativeContent", "storage", "tabs", "notifications", "https://cmp3060m-236317.appspot.com/"],
 
     "background": {
         "scripts": ["js/background.js", "js/jquery-3.3.1.min.js"],

@@ -2,7 +2,7 @@ function checkSiteAddress(siteAddress){
 
   var siteStatus = "";
 
-  var trustedSite = false, satiricalSite = false, fakeSite = false, isInternalPage = false;;
+  var trustedSite = false, satiricalSite = false, fakeSite = false;
 
   var internalChromeUrls = ["chrome://about/","chrome://accessibility/","chrome://appcache-internals/","chrome://apps/","chrome://badcastcrash/","chrome://blob-internals/",
   "chrome://bluetooth-internals/","chrome://bookmarks/","chrome://chrome/","chrome://chrome-urls/","chrome://components/","chrome://conflicts/","chrome://crash/",
@@ -70,7 +70,9 @@ function isSiteTrusted(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/biasedSites", {"url": siteAddress})
+  $.post("http://127.0.0.1:5000/biasedSites", {"url": siteAddress})
+
+  //$.post("https://cmp3060m-236317.appspot.com/biasedSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -92,7 +94,9 @@ function isSiteSatirical(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/satiricalSites", {"url": siteAddress})
+  $.post("http://127.0.0.1:5000/satiricalSites", {"url": siteAddress})
+
+  //$.post("https://cmp3060m-236317.appspot.com/satiricalSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -116,6 +120,8 @@ function isSiteFake(siteAddress){
 
   $.post("http://127.0.0.1:5002/fakeNewsSites", {"url": siteAddress})
 
+  //$.post("https://cmp3060m-236317.appspot.com/fakeNewsSites", {"url": siteAddress})
+
   .done(function(data) {
 
     if (data.fakeNewsSites.length == 1){
@@ -134,6 +140,8 @@ function retrieveSiteInfo(tabId){
 
   var url = "";
 
+  initialiseStorage();
+
   chrome.tabs.get(tabId, function (currentTab) {
 
     url = currentTab.url;
@@ -150,6 +158,78 @@ function retrieveSiteInfo(tabId){
         });
       
       }
+      else{
+
+        chrome.storage.local.get('numberArticlesSameSite', function(x) {
+
+          if (x.numberArticlesSameSite == 5){
+
+            chrome.storage.local.get('furtherReadingNotifications', function(y) {
+
+              if (y.furtherReadingNotifications == true){
+
+                chrome.storage.local.get('relatedArticles', function(z) {
+
+                  if (z.relatedArticles.length > 0){
+                    
+                    var NotificationOptions = {
+          
+                      type: 'basic',
+                      iconUrl: 'pluginImages/icon.png',
+                      title: 'Fancy a different perspective?',
+                      message: "You've been browsing this site for a while. How about visiting another source? " + z.relatedArticles.length + " found on this topic." 
+          
+                    };
+          
+                    chrome.notifications.create('sameSiteNotif', NotificationOptions);
+          
+                    chrome.notifications.onClicked.addListener(notificationClicked);
+      
+                    chrome.storage.local.set({'numberArticlesSameSite': 0}, function() {
+                    });
+
+                  }
+
+                });
+
+              }
+
+            });
+          }
+          else{
+
+            if (x.numberArticlesSameSite == undefined){
+
+              chrome.storage.local.set({'numberArticlesSameSite': 1}, function() {
+              });
+
+            }
+            else{
+
+              chrome.storage.local.get('content', function(i) {
+  
+                if (i.content.trim().split(/\s+/).length > 300){
+
+                  chrome.storage.local.set({'numberArticlesSameSite': x.numberArticlesSameSite + 1}, function() {
+                  });
+
+                }
+                else{
+
+                  /*chrome.storage.local.set({'numberArticlesSameSite': 0}, function() {
+                  });*/
+
+                }
+
+              });
+
+            }
+
+          }
+
+        });
+
+      }
 
       changeIconColor(tabId);
   
@@ -165,7 +245,9 @@ function retrieveSiteInfo(tabId){
 
   chrome.storage.local.set({'siteAddress': url}, function() {
 
-    $.post("http://127.0.0.1:5002/hello", {"url": url})
+    $.post("http://127.0.0.1:5000/hello", {"url": url})
+
+    //$.post("https://cmp3060m-236317.appspot.com/hello", {"url": url})
     
     .done(function(data) {
 
@@ -190,12 +272,12 @@ function retrieveSiteInfo(tabId){
 
       chrome.storage.local.get('submittedDate', function(y) {
 
-        if (y.submittedDate != undefined){
+        if ((y.submittedDate != undefined) && (y.submittedDate != "null")){
 
           data.publishDate = y.submittedDate;
 
-          chrome.storage.local.set({'submittedDate': undefined.value}, function() {
-          });
+          /*chrome.storage.local.set({'submittedDate': undefined}, function() {
+          });*/
 
         }
 
@@ -211,6 +293,9 @@ function retrieveSiteInfo(tabId){
         else{
   
           chrome.storage.local.set({'articleStatus': "Article found"}, function() {
+          });
+
+          chrome.storage.local.set({'submittedDate': "null"}, function() {
           });
   
         }
@@ -266,12 +351,12 @@ function retrieveSiteInfo(tabId){
   
                 var daysSincePublished = Math.floor((today - publishDate)/(1000*60*60*24));
   
-                if (daysSincePublished < 180){
+                if (daysSincePublished < 30){
   
                   chrome.storage.local.set({'noNewsAPIdata': "false"}, function() {
                   });
                  
-                  relatedArticles = getRelatedArticles(data, x.publishDate);
+                  relatedArticles = getRelatedArticles(data, x.publishDate, url);
   
                   var relatedArticlesBias = [];
   
@@ -309,20 +394,28 @@ function retrieveSiteInfo(tabId){
             chrome.storage.local.get('content', function(y) {
   
               if (y.content.trim().split(/\s+/).length > 300){
+
+                chrome.storage.local.get('foundArticleNotifications', function(y) {
+
+                  if (y.foundArticleNotifications == true){
+
+                    var NotificationOptions = {
   
-                var NotificationOptions = {
+                      type: 'basic',
+                      iconUrl: 'pluginImages/icon.png',
+                      title: 'Is this an article?',
+                      message: 'Article content was found, but no publish date was. Please manually enter it by opening the biasBuddy extension.'
+      
+                    };
+      
+                    chrome.notifications.create('noPublishDateNotif', NotificationOptions);
+      
+                    chrome.notifications.onClicked.addListener(notificationClicked);
+
+                  }
   
-                  type: 'basic',
-                  iconUrl: 'pluginImages/icon.png',
-                  title: 'Is this an article?',
-                  message: 'We have found article content, but no publish date. Please manually enter it by opening the biasBuddy extension.'
-  
-                };
-  
-                chrome.notifications.create('noPublishDateNotif', NotificationOptions);
-  
-                chrome.notifications.onClicked.addListener(notificationClicked);
-  
+                });
+
               }
   
             });
@@ -367,7 +460,27 @@ function notificationClicked() {
 
   chrome.storage.local.get('tabId', function(data) {
 
-    chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'setPublishDate.html'});
+    chrome.notifications.getAll(function(notifications){
+
+      try{
+  
+        if (notifications.noPublishDateNotif == true){
+  
+          chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'setPublishDate.html'});
+  
+        }
+  
+        if (notifications.sameSiteNotif == true){
+  
+          chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'furtherReading.html'});
+  
+        }
+      }
+      catch{
+  
+      }
+  
+    });
 
   });
 
@@ -379,7 +492,9 @@ function getFakeWords(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/keywords", {"text": content})
+  $.post("http://127.0.0.1:5000/keywords", {"text": content})
+
+  //$.post("https://cmp3060m-236317.appspot.com/keywords", {"text": content})
 
   .done(function(data) {
 
@@ -405,7 +520,9 @@ function getSentences(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/sentences", {"content": content})
+  $.post("http://127.0.0.1:5000/sentences", {"content": content})
+
+  //$.post("https://cmp3060m-236317.appspot.com/sentences", {"content": content})
 
   .done(function(data) {
 
@@ -431,7 +548,9 @@ function getTypes(fakeWords){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/keywordsType", {'words': JSON.stringify(fakeWords)})
+  $.post("http://127.0.0.1:5000/keywordsType", {'words': JSON.stringify(fakeWords)})
+
+  //$.post("https://cmp3060m-236317.appspot.com/keywordsType", {"words": JSON.stringify(fakeWords)})
 
   .done(function(y) {
 
@@ -449,7 +568,9 @@ function getDefinitions(fakeWords){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/keywordsDef", {'words': JSON.stringify(fakeWords)})
+  $.post("http://127.0.0.1:5000/keywordsDef", {'words': JSON.stringify(fakeWords)})
+
+  //$.post("https://cmp3060m-236317.appspot.com/keywordsDef", {"words": JSON.stringify(fakeWords)})
 
   .done(function(y) {
 
@@ -467,7 +588,9 @@ function getSentiment(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/sentiment", {"content": content})
+  $.post("http://127.0.0.1:5000/sentiment", {"content": content})
+
+  //$.post("https://cmp3060m-236317.appspot.com/sentiment", {"content": content})
 
   .done(function(data) {
 
@@ -564,7 +687,7 @@ function removeRedundantWords(title, words){
 
 }
 
-function getRelatedArticles(data, publishDate){
+function getRelatedArticles(data, publishDate, url){
 
   var relatedArticles = [];
 
@@ -642,7 +765,7 @@ function getRelatedArticles(data, publishDate){
 
   }*/
 
-  $.get("https://newsapi.org/v2/everything?q=" + finalQuery + "&from=" + publishDate + "&to=" + publishDate + "&sortBy=relevancy&apiKey=6d5b5753b28949f59213beed43d315a2")
+  $.get("https://newsapi.org/v2/everything?q=" + finalQuery + "&from=" + publishDate + "&to=" + publishDate + "&sortBy=relevancy&apiKey=383e6061e4414bf0b1211f1639f1e433")
 
   .done(function(newsApiData) {
 
@@ -650,9 +773,16 @@ function getRelatedArticles(data, publishDate){
 
     for (i = 0; i < newsApiData.articles.length; i++){
 
-      x = newsApiData.articles[i];
+      if (newsApiData.articles[i].url != url){
 
-      relatedArticles.push(newsApiData.articles[i]);
+        relatedArticles.push(newsApiData.articles[i]);
+
+      }
+      else{
+
+        relatedArticles.pop(i);
+
+      }
 
     }
 
@@ -721,6 +851,103 @@ function changeIconColor(tabId){
 
 }
 
+function initialiseStorage(){
+
+  chrome.storage.local.set({'siteStatus': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'authors': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'title': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'content': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'keywords': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'summary': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'noNewsAPIdata': "true"}, function() {
+  });
+
+  chrome.storage.local.set({'publishDate': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'submittedDate': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'articleStatus': "Article not found"}, function() {
+  });
+
+  chrome.storage.local.set({'fakeWords': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'types': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'definitions': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'sentences': undefined}, function() {
+  });
+
+  chrome.storage.local.set({'sentiment': undefined}, function() {
+  });
+
+  chrome.storage.local.get('foundArticleNotifications', function(y) {
+
+    if (y.foundArticleNotifications == undefined){
+
+      chrome.storage.local.set({'foundArticleNotifications': true}, function() {
+      });
+
+    }
+
+  });
+
+  chrome.storage.local.get('furtherReadingNotifications', function(y) {
+
+    if (y.furtherReadingNotifications == undefined){
+
+      chrome.storage.local.set({'furtherReadingNotifications': true}, function() {
+      });
+
+    }
+
+  });
+
+}
+
+function removeNotifications(){
+
+  chrome.notifications.getAll(function(notifications){
+
+    try{
+
+      if (notifications.noPublishDateNotif == true){
+
+        chrome.notifications.clear("noPublishDateNotif");
+
+      }
+
+      if (notifications.numberArticlesSameSite == true){
+
+        chrome.notifications.clear("numberArticlesSameSite");
+
+      }
+    }
+    catch{
+
+    }
+
+  });
+
+}
+
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
   var url = "";
@@ -731,6 +958,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 
     if (changeInfo.url == url) {
 
+      removeNotifications();
+
       retrieveSiteInfo(tabId);
   
     }
@@ -740,6 +969,8 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 chrome.tabs.onActivated.addListener(function(activeInfo) {
+
+  removeNotifications();
 
   retrieveSiteInfo(activeInfo.tabId);
 
@@ -754,5 +985,15 @@ chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
     ],
       actions: [new chrome.declarativeContent.ShowPageAction()]
   }]);
+
+});
+
+chrome.runtime.onInstalled.addListener(function (){
+
+  chrome.tabs.getSelected(null, function(tab) { 
+
+    retrieveSiteInfo(tab.id);
+
+  });
 
 });

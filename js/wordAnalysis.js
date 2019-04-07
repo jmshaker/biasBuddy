@@ -92,7 +92,7 @@ chrome.storage.local.get('siteName', function(data) {
 
 });
 
-$('#websiteStatus').click(function(){
+/*$('#websiteStatus').click(function(){
 
   if ($(':animated').length) {
 
@@ -118,7 +118,7 @@ $('#websiteStatus').click(function(){
 
   }
 
-});
+});*/
 
 /*chrome.storage.local.get('summary', function(data) {
 
@@ -264,6 +264,20 @@ chrome.storage.local.get('sentiment', function(data) {
     });
 
   }
+
+});
+
+$("#optionsButton").hover(function(){
+  $(this).animate({
+    height: '+=2px',
+    width: '+=2px'
+  }, 200);
+
+}, function() {
+  $(this).animate({
+    height: '-=2px',
+    width: '-=2px'
+  },200);
 
 });
 

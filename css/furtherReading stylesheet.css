@@ -1,6 +1,11 @@
 body{
-	height: 300px;
+
+    height: 300px;
     width: 200px;
+
+    /*padding:0px;*/
+    /*margin: 0px;*/
+
 }
 
 body p{
@@ -10,13 +15,17 @@ body p{
 }
 
 #header{
+
     top:0px;
     background-color:white;
 	position:fixed;
-	height:50px;
+	height:90px;
 	width: 100%;
     z-index: 2;
     display: block;
+
+    text-align: center;
+
 }
 
 #backButton{
@@ -34,9 +43,10 @@ body p{
 
 #websiteStatus{
 
-    top:5px;
-    left:100px;
-    position:fixed;
+    margin-top:10px;
+    /*left:100px;*/
+    display: inline-block;
+    /*position:fixed;*/
 	height:40px;
     width:40px;
     border-radius:20px;
@@ -47,8 +57,9 @@ body p{
 
 #websiteName{
 
-    top:0px;
-    left:1000px;
+    top:40px;
+    /*left:1000px;*/
+    left:0px;
     position:fixed;
 	height:10px;
     width:100%;
@@ -57,8 +68,9 @@ body p{
 
 #websiteType{
 
-    top:10px;
-    left:1000px;
+    top:55px;
+    /*left:1000px;*/
+    left:0px;
     position:fixed;
 	height:10px;
     width:100%;
@@ -66,14 +78,30 @@ body p{
 }
 
 #other{
-    top:50px;
+
+    top:80px;
     position: relative;
-	height:/*270px*/relative;
+    
+    /*height:300px;*/
+
+    height: relative;
+
+    overflow-y: auto;
+
 	width: 100%;
-	z-index: 1;
+    z-index: 1;
+    background-color: white;
+    
+}
+
+#furtherReading{
+
+    height: 0px;
+    
 }
 
 #footer {
+
     bottom:0px;
     background-color: white;
     position:fixed;
@@ -81,14 +109,15 @@ body p{
 	width: 100%;
 	z-index: 2;
     display: block;
+
 }
 
 #optionsButton {
 
     left:50%;
     position:fixed;
-	height:20px;
-    width:20px;
+	height:25px;
+    width:25px;
     background-color: white;
 	/*z-index: 2;*/
 

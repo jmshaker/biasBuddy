@@ -16,13 +16,13 @@ backButton.addEventListener('click', function() { popupMain(); })
 
 //websiteStatusButton.addEventListener('click', function() { displaySiteInfo(); })
 
-siteContentButton.addEventListener('click', function() { siteContent(); })
+articleContentButton.addEventListener('click', function() { articleContent(); })
 
 wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
 
 furtherReadingButton.addEventListener('click', function() { furtherReading(); })
 
-siteContentButton.addEventListener('click', function() { siteContent(); })
+articleContentButton.addEventListener('click', function() { articleContent(); })
 
 /*chrome.storage.local.get('siteName', function(data) {
 
@@ -148,6 +148,20 @@ function dateSubmitted(){
 chrome.storage.local.get('siteName', function(data) {
 
   websiteNameText.innerHTML = data.siteName;
+
+});
+
+$("#optionsButton").hover(function(){
+  $(this).animate({
+    height: '+=2px',
+    width: '+=2px'
+  }, 200);
+
+}, function() {
+  $(this).animate({
+    height: '-=2px',
+    width: '-=2px'
+  },200);
 
 });
 

@@ -8,12 +8,6 @@ body{
 
 }
 
-body p{
-
-    -webkit-user-select: none;
-
-}
-
 #header{
 
     top:0px;
@@ -81,7 +75,13 @@ body p{
 
     top:80px;
     position: relative;
-	height:270px;
+
+    height:relative;
+
+    /*height:130px;*/
+    
+    overflow-y: auto;
+
 	width: 100%;
     z-index: 1;
     background-color: white;

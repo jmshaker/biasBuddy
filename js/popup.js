@@ -2,16 +2,15 @@ let websiteNameText = document.getElementById('websiteName');
 
 let websiteStatusButton = document.getElementById('websiteStatus');
 
-let siteContentButton = document.getElementById('siteContent');
+let articleContentButton = document.getElementById('articleContent');
 let wordAnalysisButton = document.getElementById('wordAnalysis');
 let furtherReadingButton = document.getElementById('furtherReading');
 
 let optionsButton = document.getElementById('optionsButton');
 
-
 //websiteStatusButton.addEventListener('click', function() { displaySiteInfo(); })
 
-siteContentButton.addEventListener('click', function() { siteContent(); })
+articleContentButton.addEventListener('click', function() { articleContent(); })
 
 wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
 
@@ -19,12 +18,6 @@ furtherReadingButton.addEventListener('click', function() { furtherReading(); })
 
 optionsButton.addEventListener('click', function() { openOptions(); })
 
-
-/*chrome.storage.local.get('siteName', function(data) {
-
-  websiteNameText.innerHTML = data.siteName;
-
-});*/
 
 chrome.storage.local.get('siteStatus', function(data) {
 
@@ -105,31 +98,118 @@ chrome.storage.local.get('siteName', function(data) {
 
 });
 
-$('#websiteStatus').click(function(){
+chrome.storage.local.get('articleStatus', function(data) {
 
-  if ($(':animated').length) {
+  switch(data.articleStatus){
+
+    case "Article found":
+
+    $("#articleContent").removeAttr("disabled");
+
+    $("#articleContent").css("opacity", 1);
+
+    $("#wordAnalysis").removeAttr("disabled");
+
+    $("#wordAnalysis").css("opacity", 1);
+
+    chrome.storage.local.get('relatedArticles', function(y) {
+
+      if (y.relatedArticles.length > 0){
+
+        $("#furtherReading").removeAttr("disabled");
+
+        $("#furtherReading").css("opacity", 1);
+
+      }
+    });
+
+    break;
+
+    case "Article not found":
+
+    $("#articleContent").attr("disabled","disabled")
+
+    $("#articleContent").css("opacity", 0.2);
+
+    $("#wordAnalysis").attr("disabled","disabled")
+
+    $("#wordAnalysis").css("opacity", 0.2);
+
+    $("#furtherReading").attr("disabled","disabled")
+
+    $("#furtherReading").css("opacity", 0.2);
+
+    break;
 
   }
-  else{
 
-    if (document.getElementById("websiteName").style.left > "1000px") {
+});
 
-      $('#websiteStatus').animate({left:'+=50'},1000);
-  
-      $('#websiteType').animate({left:'+=900'},1000);
-      $('#websiteName').animate({left:'+=900'},1000);
-  
-    }
-    else{
-  
-      $('#websiteStatus').animate({left:'-=50'},1000);
-  
-      $('#websiteType').animate({left:'-=900'},1000);
-      $('#websiteName').animate({left:'-=900'},1000);
-  
-    }
+$("#articleContent").hover(function(){
+  $(this).animate({
+    height: '+=5px',
+    width: '+=5px'
+  }, 200);
 
-  }
+  $("#selectedButton").text("Article content");
+
+}, function() {
+  $(this).animate({
+    height: '-=5px',
+    width: '-=5px'
+  },200);
+
+  $("#selectedButton").text("");
+
+});
+
+$("#wordAnalysis").hover(function(){
+  $(this).animate({
+    height: '+=5px',
+    width: '+=5px'
+  }, 200);
+
+  $("#selectedButton").text("Article analysis");
+
+}, function() {
+  $(this).animate({
+    height: '-=5px',
+    width: '-=5px'
+  },200);
+
+  $("#selectedButton").text("");
+
+}); 
+
+$("#furtherReading").hover(function(){
+  $(this).animate({
+    height: '+=5px',
+    width: '+=5px'
+  }, 200);
+
+  $("#selectedButton").text("Further reading");
+
+}, function() {
+  $(this).animate({
+    height: '-=5px',
+    width: '-=5px'
+  },200);
+
+  $("#selectedButton").text("");
+
+});
+
+$("#optionsButton").hover(function(){
+  $(this).animate({
+    height: '+=2px',
+    width: '+=2px'
+  }, 200);
+
+}, function() {
+  $(this).animate({
+    height: '-=2px',
+    width: '-=2px'
+  },200);
 
 });
 
@@ -139,9 +219,9 @@ function openOptions(){
 
 }
 
-function siteContent(){
+function articleContent(){
 
-  window.location.href="siteContent.html";
+  window.location.href="articleContent.html";
 
 }
 
