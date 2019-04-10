@@ -3,7 +3,7 @@ let websiteNameText = document.getElementById('websiteName');
 let websiteStatusButton = document.getElementById('websiteStatus');
 
 let articleContentButton = document.getElementById('articleContent');
-let wordAnalysisButton = document.getElementById('wordAnalysis');
+let articleAnalysisButton = document.getElementById('articleAnalysis');
 let furtherReadingButton = document.getElementById('furtherReading');
 
 let optionsButton = document.getElementById('optionsButton');
@@ -12,7 +12,7 @@ let optionsButton = document.getElementById('optionsButton');
 
 articleContentButton.addEventListener('click', function() { articleContent(); })
 
-wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
+articleAnalysisButton.addEventListener('click', function() { articleAnalysis(); })
 
 furtherReadingButton.addEventListener('click', function() { furtherReading(); })
 
@@ -108,9 +108,9 @@ chrome.storage.local.get('articleStatus', function(data) {
 
     $("#articleContent").css("opacity", 1);
 
-    $("#wordAnalysis").removeAttr("disabled");
+    $("#articleAnalysis").removeAttr("disabled");
 
-    $("#wordAnalysis").css("opacity", 1);
+    $("#articleAnalysis").css("opacity", 1);
 
     chrome.storage.local.get('relatedArticles', function(y) {
 
@@ -131,9 +131,9 @@ chrome.storage.local.get('articleStatus', function(data) {
 
     $("#articleContent").css("opacity", 0.2);
 
-    $("#wordAnalysis").attr("disabled","disabled")
+    $("#articleAnalysis").attr("disabled","disabled")
 
-    $("#wordAnalysis").css("opacity", 0.2);
+    $("#articleAnalysis").css("opacity", 0.2);
 
     $("#furtherReading").attr("disabled","disabled")
 
@@ -163,7 +163,7 @@ $("#articleContent").hover(function(){
 
 });
 
-$("#wordAnalysis").hover(function(){
+$("#articleAnalysis").hover(function(){
   $(this).animate({
     height: '+=5px',
     width: '+=5px'
@@ -225,9 +225,9 @@ function articleContent(){
 
 }
 
-function wordAnalysis(){
+function articleAnalysis(){
 
-  window.location.href="wordAnalysis.html";
+  window.location.href="articleAnalysis.html";
 
 }
 

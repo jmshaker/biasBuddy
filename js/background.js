@@ -70,9 +70,9 @@ function isSiteTrusted(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/biasedSites", {"url": siteAddress})
+  //$.post("http://127.0.0.1:5000/biasedSites", {"url": siteAddress})
 
-  //$.post("https://cmp3060m-236317.appspot.com/biasedSites", {"url": siteAddress})
+  $.post("https://cmp3060m-236317.appspot.com/biasedSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -94,9 +94,9 @@ function isSiteSatirical(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/satiricalSites", {"url": siteAddress})
+  //$.post("http://127.0.0.1:5000/satiricalSites", {"url": siteAddress})
 
-  //$.post("https://cmp3060m-236317.appspot.com/satiricalSites", {"url": siteAddress})
+  $.post("https://cmp3060m-236317.appspot.com/satiricalSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -118,9 +118,9 @@ function isSiteFake(siteAddress){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5002/fakeNewsSites", {"url": siteAddress})
+  //$.post("http://127.0.0.1:5002/fakeNewsSites", {"url": siteAddress})
 
-  //$.post("https://cmp3060m-236317.appspot.com/fakeNewsSites", {"url": siteAddress})
+  $.post("https://cmp3060m-236317.appspot.com/fakeNewsSites", {"url": siteAddress})
 
   .done(function(data) {
 
@@ -245,9 +245,9 @@ function retrieveSiteInfo(tabId){
 
   chrome.storage.local.set({'siteAddress': url}, function() {
 
-    $.post("http://127.0.0.1:5000/hello", {"url": url})
+    //$.post("http://127.0.0.1:5000/hello", {"url": url})
 
-    //$.post("https://cmp3060m-236317.appspot.com/hello", {"url": url})
+    $.post("https://cmp3060m-236317.appspot.com/hello", {"url": url})
     
     .done(function(data) {
 
@@ -446,8 +446,6 @@ function retrieveSiteInfo(tabId){
       
     });
 
-    //var isAddress = false;
-
     var baseAddress = $('<a>').prop('href', url).prop('hostname');
 
     chrome.storage.local.set({'siteName': baseAddress}, function() {
@@ -469,12 +467,16 @@ function notificationClicked() {
           chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'setPublishDate.html'});
   
         }
+        else{
+
+          if (notifications.sameSiteNotif == true){
   
-        if (notifications.sameSiteNotif == true){
-  
-          chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'furtherReading.html'});
-  
+            chrome.browserAction.setPopup({"tabId":data.tabId,"popup":'furtherReading.html'});
+    
+          }
+
         }
+  
       }
       catch{
   
@@ -492,9 +494,9 @@ function getFakeWords(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/keywords", {"text": content})
+  //$.post("http://127.0.0.1:5000/keywords", {"text": content})
 
-  //$.post("https://cmp3060m-236317.appspot.com/keywords", {"text": content})
+  $.post("https://cmp3060m-236317.appspot.com/keywords", {"text": content})
 
   .done(function(data) {
 
@@ -520,9 +522,9 @@ function getSentences(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/sentences", {"content": content})
+  //$.post("http://127.0.0.1:5000/sentences", {"content": content})
 
-  //$.post("https://cmp3060m-236317.appspot.com/sentences", {"content": content})
+  $.post("https://cmp3060m-236317.appspot.com/sentences", {"content": content})
 
   .done(function(data) {
 
@@ -548,9 +550,9 @@ function getTypes(fakeWords){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/keywordsType", {'words': JSON.stringify(fakeWords)})
+  //$.post("http://127.0.0.1:5000/keywordsType", {'words': JSON.stringify(fakeWords)})
 
-  //$.post("https://cmp3060m-236317.appspot.com/keywordsType", {"words": JSON.stringify(fakeWords)})
+  $.post("https://cmp3060m-236317.appspot.com/keywordsType", {"words": JSON.stringify(fakeWords)})
 
   .done(function(y) {
 
@@ -568,9 +570,9 @@ function getDefinitions(fakeWords){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/keywordsDef", {'words': JSON.stringify(fakeWords)})
+  //$.post("http://127.0.0.1:5000/keywordsDef", {'words': JSON.stringify(fakeWords)})
 
-  //$.post("https://cmp3060m-236317.appspot.com/keywordsDef", {"words": JSON.stringify(fakeWords)})
+  $.post("https://cmp3060m-236317.appspot.com/keywordsDef", {"words": JSON.stringify(fakeWords)})
 
   .done(function(y) {
 
@@ -588,9 +590,9 @@ function getSentiment(content){
 
   $.ajaxSetup({async: false});
 
-  $.post("http://127.0.0.1:5000/sentiment", {"content": content})
+  //$.post("http://127.0.0.1:5000/sentiment", {"content": content})
 
-  //$.post("https://cmp3060m-236317.appspot.com/sentiment", {"content": content})
+  $.post("https://cmp3060m-236317.appspot.com/sentiment", {"content": content})
 
   .done(function(data) {
 
@@ -704,8 +706,6 @@ function getRelatedArticles(data, publishDate, url){
   var hello = allKeywords.split(" OR ");
 
   var y = removeRedundantWords(allPeople, hello);
-
-  //var z = removeRedundantWords(allOrganisations, hello);
 
   var i = y.split(" OR ");
 

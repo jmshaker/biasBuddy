@@ -14,21 +14,9 @@ setPublishDateButton.addEventListener('click', function() { dateSubmitted(); })
 
 backButton.addEventListener('click', function() { popupMain(); })
 
-//websiteStatusButton.addEventListener('click', function() { displaySiteInfo(); })
+let optionsButton = document.getElementById('optionsButton');
 
-articleContentButton.addEventListener('click', function() { articleContent(); })
-
-wordAnalysisButton.addEventListener('click', function() { wordAnalysis(); })
-
-furtherReadingButton.addEventListener('click', function() { furtherReading(); })
-
-articleContentButton.addEventListener('click', function() { articleContent(); })
-
-/*chrome.storage.local.get('siteName', function(data) {
-
-  websiteNameText.innerHTML = data.siteName;
-
-});*/
+optionsButton.addEventListener('click', function() { openOptions(); })
 
 chrome.storage.local.get('siteStatus', function(data) {
 
@@ -165,30 +153,8 @@ $("#optionsButton").hover(function(){
 
 });
 
-$('#websiteStatus').click(function(){
+function popupMain(){
 
-  if ($(':animated').length) {
+  window.location.href="popup.html";
 
-  }
-  else{
-
-    if (document.getElementById("websiteName").style.left > "1000px") {
-
-      $('#websiteStatus').animate({left:'+=50'},1000);
-  
-      $('#websiteType').animate({left:'+=900'},1000);
-      $('#websiteName').animate({left:'+=900'},1000);
-  
-    }
-    else{
-  
-      $('#websiteStatus').animate({left:'-=50'},1000);
-  
-      $('#websiteType').animate({left:'-=900'},1000);
-      $('#websiteName').animate({left:'-=900'},1000);
-  
-    }
-
-  }
-
-});
+}

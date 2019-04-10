@@ -164,14 +164,6 @@ $("#optionsButton").hover(function(){
 
 });
 
-$(window).resize(function() {
-
-  var x = $("#other").height();
-
-  $("#other").height(x + 50);
-
-});
-
 function popupMain(){
 
   window.location.href="popup.html";

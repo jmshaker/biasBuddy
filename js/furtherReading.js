@@ -5,6 +5,8 @@ let backButton = document.getElementById('backButton');
 
 backButton.addEventListener('click', function() { popupMain(); })
 
+optionsButton.addEventListener('click', function() { openOptions(); })
+
 chrome.storage.local.get('siteName', function(data) {
 
   websiteNameText.innerHTML = data.websiteNameText;
@@ -139,17 +141,6 @@ chrome.storage.local.get('noNewsAPIdata', function(x) {
 
 });
 
-/*chrome.storage.local.get('relatedArticles', function(data) {
-
-  for (i = 0; i < data.relatedArticles.length; i++){
-  
-    document.getElementById("relatedArticles").innerHTML = document.getElementById("relatedArticles").innerHTML + "<p><b>" + data.relatedArticles[i].source.name + "</b></p>" + "<a href=" + data.relatedArticles[i].url + " target=" + "blank>" + data.relatedArticles[i].title + "</a> <br />"
-    + "<img src=" + data.relatedArticles[i].urlToImage + " style=" + "width:200px;height:100px;>";
-
-  }
-
-});*/
-
 $("#optionsButton").hover(function(){
   $(this).animate({
     height: '+=2px',
@@ -161,14 +152,6 @@ $("#optionsButton").hover(function(){
     height: '-=2px',
     width: '-=2px'
   },200);
-
-});
-
-$(window).resize(function() {
-
-  //var x = $("#relatedArticles").height();
-
-  //$("#relatedArticles").height(x + 150);
 
 });
 

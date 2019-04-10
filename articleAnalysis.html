@@ -3,11 +3,37 @@
 
   <head>
 
-    <link href="css/setPublishDate stylesheet.css" rel="stylesheet" type="text/css">
+    <link href="css/articleAnalysis stylesheet.css" rel="stylesheet" type="text/css">
 
     <script src="js/jquery-3.3.1.min.js"></script>
 
   </head>
+
+  <style>
+    .tooltip {
+      position: relative;
+      display: inline-block;
+      border-bottom: 1px dotted black;
+    }
+    
+    .tooltip .tooltiptext {
+      visibility: hidden;
+      width: 120px;
+      background-color: black;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px 0;
+    
+      /* Position the tooltip */
+      position: absolute;
+      z-index: 1;
+    }
+    
+    .tooltip:hover .tooltiptext {
+      visibility: visible;
+    }
+    </style>
 
   <body>
 
@@ -25,9 +51,22 @@
 
     <div id="other">
 
-      <p>Article published date (YYYY-MM-DD): <input id="myTextBox" type="text" style="width:100px"/></p>
+      <p id="summaryText">
+      
+      </p>
 
-      <button id="setPublishDateButton" type="button" disabled="true" style="width:60px"> Submit </button>
+      <p id="keywordsText">
+      
+      </p>
+
+      <p id="fakeWordsText">
+
+      </p>
+
+      <p id="sentimentText">
+      
+      </p>
+      
 
     </div>
 
@@ -48,9 +87,9 @@
 
     </div>
 
-    <script src="js/setPublishDate.js"></script>
+    <script src="js/articleAnalysis.js"></script>
 
-    <script src="js/background.js"></script>
+    <script src="js/popup.js"></script>
 
   </body>
 
